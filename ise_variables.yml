@@ -1,0 +1,4 @@
+ise_hostname: "192.168.0.20"
+ise_username: "admin"
+ise_verify: False
+ad_orgunit: "ISE"

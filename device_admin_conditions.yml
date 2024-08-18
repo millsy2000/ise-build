@@ -1,0 +1,53 @@
+---
+device_admin_simple_conditions:
+  firewall-admins:
+    name: "firewall-admins"
+    conditionType: "LibraryConditionAttributes"
+    dictionaryName: "home.local"
+    attributeName: "ExternalGroups"
+    operator: "equals"
+    attributeValue: "home.local/SecurityGroups/firewall-admins"
+  firewall-read:
+    name: "firewall-read"
+    conditionType: "LibraryConditionAttributes"
+    dictionaryName: "home.local"
+    attributeName: "ExternalGroups"
+    operator: "equals"
+    attributeValue: "home.local/SecurityGroups/firewall-read"
+device_admin_complex_conditions:
+  dell-switch-admins:
+    name: "dell-switch-admins"
+    conditionType: "LibraryConditionAndBlock"
+    dictionaryName: null
+    attributeName: null
+    operator: null
+    attributeValue: null
+    children:
+      - conditionType: "ConditionAttributes"
+        dictionaryName: "DEVICE"
+        attributeName: "Network Device Profile"
+        operator: "equals"
+        attributeValue: "Cisco"
+      - conditionType: "ConditionAttributes"
+        dictionaryName: "home.local"
+        attributeName: "ExternalGroups"
+        operator: "equals"
+        attributeValue: "home.local/SecurityGroups/switch-admins"
+  dell-switch-read:
+    name: "dell-switch-read"
+    conditionType: "LibraryConditionAndBlock"
+    dictionaryName: null
+    attributeName: null
+    operator: null
+    attributeValue: null
+    children:
+      - conditionType: "ConditionAttributes"
+        dictionaryName: "DEVICE"
+        attributeName: "Network Device Profile"
+        operator: "equals"
+        attributeValue: "Cisco"
+      - conditionType: "ConditionAttributes"
+        dictionaryName: "home.local"
+        attributeName: "ExternalGroups"
+        operator: "equals"
+        attributeValue: "home.local/SecurityGroups/switch-read"

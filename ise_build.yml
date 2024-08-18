@@ -1,0 +1,192 @@
+---
+- hosts: ise_multi
+  vars_files:
+    - ise_variables.yml
+    - vault.yml
+    - device_admin_conditions.yml
+    - device_admin_policies.yml
+    - ad_variables.yml
+  vars:
+    ise_login: &ise_login
+      ise_hostname: "{{ ise_hostname }}"
+      ise_username: "{{ ise_username }}"
+      ise_password: "{{ ise_password }}"
+      ise_verify: "{{ ise_verify }}"
+
+  gather_facts: no
+
+  vars_prompt:
+    - name: ad_username
+      prompt: What is your AD Admin username?
+      private: false
+    - name: ad_password
+      prompt: What is your AD Admin password?
+
+  tasks:
+  - name: Create device groups
+    cisco.ise.network_device_group:
+      <<: *ise_login
+      state: present
+      description: "{{item.description}}"
+      name: "{{ item.name}}"
+      othername: "Device Type"
+    loop:
+      - {name: 'Device Type#All Device Types#Routers', description: 'Routers'}
+      - {name: 'Device Type#All Device Types#Firewalls', description: 'Firewalls'}
+
+  - name: Create network devices
+    cisco.ise.network_device:
+      <<: *ise_login
+      state: present
+      tacacsSettings:
+        sharedSecret: "{{tacacs_shared_secret}}"
+        connectModeOptions: 'OFF'
+      description: "{{item.description}}"
+      name: "{{ item.name}}"
+      NetworkDeviceGroupList: 
+      - "{{item.network_group}}"
+      NetworkDeviceIPList:
+      - ipaddress: "{{item.ip_address}}"
+        mask: 32
+    loop:
+      - {name: test-router, description: 'Test Router', network_group: 'Device Type#All Device Types#Routers', ip_address: '192.168.0.1'}
+      - {name: test-firewall, description: 'Test Firewall', network_group: 'Device Type#All Device Types#Firewalls', ip_address: '10.1.1.1'}
+
+  - name: Create AD Join Point
+    cisco.ise.active_directory:
+      <<: *ise_login 
+      state: present
+      name: "{{ ise_global.ad_domain_name }}"
+      domain: "{{ ise_global.ad_domain_name }}"
+    register: ad_id    
+
+  - name: Join the domain
+    cisco.ise.active_directory_join_domain_with_all_nodes:
+      <<: *ise_login
+      additionalData:
+      - name: username
+        value: "{{ ad_username }}"
+      - name: password
+        value: "{{ ad_password }}"
+      - name: orgunit
+        value: "{{ ise_global.ad_orgunit }}"
+      id: "{{ ad_id.ise_response.id }}"
+    tags: never
+
+  - name: Get AD Group SIDs
+    cisco.ise.active_directory_groups_by_domain_info:
+      <<: *ise_login
+      id: "{{ ad_id.ise_response.id }}"
+      additionalData:
+      - name: domain
+        value: "{{ ise_global.ad_domain_name }}"
+      - name: filter
+        value: "{{item}}"
+    register: ad_group_sids
+    with_items: "{{ad_groups}}"
+    tags: never
+
+  - name: Add Groups
+    cisco.ise.active_directory_add_groups:
+      <<: *ise_login
+      id: "{{ ad_id.ise_response.id }}"
+      name: "{{ ise_global.ad_domain_name }}"
+      domain: "{{ ise_global.ad_domain_name }}"
+      adgroups:
+        groups:
+        - name: "{{ item.ise_response.groups[0].name }}"
+          sid: "{{ item.ise_response.groups[0].sid }}"
+    with_items: "{{ ad_group_sids.results }}"
+    tags: never
+
+  - name: Create Command Sets
+    cisco.ise.tacacs_command_sets:
+      <<: *ise_login
+      state: present
+      description: Permit All
+      name: permit_all
+      permitUnmatched: true
+
+  - name: Create TACACS Profile
+    cisco.ise.tacacs_profile:
+      <<: *ise_login
+      state: present
+      description: test_admin
+      name: test_admin
+      sessionAttributes:
+        sessionAttributeList:
+        - name: cisco-av-pair
+          type: MANDATORY
+          value: admin
+        - name: priv-lvl
+          type: MANDATORY
+          value: "15"
+
+  - name: Create Device Simple Admin Conditions
+    cisco.ise.device_administration_conditions:
+      <<: *ise_login
+      state: present
+      attributeName: "{{ item.value.attributeName }}"
+      attributeValue: "{{ item.value.attributeValue }}"
+      conditionType: "{{ item.value.conditionType }}"
+      description: "Deployed by Ansible"
+      dictionaryName: "{{ item.value.dictionaryName }}"
+      operator: "{{ item.value.operator }}"
+      isNegate: false
+      name: "{{ item.value.name }}"
+    loop: "{{ device_admin_simple_conditions | dict2items }}"
+    register: dac_simple
+
+  - name: Save Simple Coniditions ID
+    set_fact: 
+      dac_ids: "{{ dac_ids | default ({}) | combine({item.ise_response.name:item.ise_response.id}) }}"
+    no_log: True
+    loop: "{{ dac_simple.results }}"
+
+  - name: Create Device Complex Admin Conditions
+    cisco.ise.device_administration_conditions:
+      <<: *ise_login
+      state: present
+      conditionType: "{{ item.value.conditionType }}"
+      description: "Deployed by Ansible"
+      isNegate: false
+      name: "{{ item.value.name }}"
+      children: "{{ item.value.children }}"
+    loop: "{{ device_admin_complex_conditions | dict2items }}"
+    register: dac_complex
+
+  - name: Save Complex Coniditions ID
+    set_fact:
+      dac_ids: "{{ dac_ids | default ({}) | combine({item.ise_response.name:item.ise_response.id}) }}"
+    no_log: True
+    loop: "{{ dac_complex.results }}"
+
+  - name: Create TACACS Policies
+    cisco.ise.device_administration_policy_set:
+      <<: *ise_login
+      state: present
+      condition:
+        attributeValue: "{{ item.value.attribute }}"
+        attributeName: "Device Type"
+        conditionType: "ConditionAttributes"
+        isNegate: false
+        dictionaryName: "DEVICE"
+        operator: "equals"
+      default: false
+      description: "Created by Ansible"
+      isProxy: false
+      name: "{{ item.value.name }}"
+      serviceName: "Default Device Admin"
+    loop: "{{ device_admin_policies | dict2items }}"
+    register: tacacs_profiles
+
+  - name: Create Device Admin Authorization Profiles
+    include_tasks: device_admin_author_new.yml
+    with_items: "{{ tacacs_profiles.results }}"
+    loop_control:
+      loop_var: outer_item
+    
+
+#  - name: debug
+#    debug:
+#     var: tacacs_profiles

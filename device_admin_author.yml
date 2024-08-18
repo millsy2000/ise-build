@@ -1,0 +1,26 @@
+---
+- name: Create Authorization Rule
+  cisco.ise.device_administration_authorization_rules:
+    ise_hostname: "{{ ise_hostname }}"
+    ise_username: "{{ ise_username }}"
+    ise_password: "{{ ise_password }}"
+    ise_verify: "{{ ise_verify }}"
+    state: present
+    commands: "{{ item.command_sets }}"
+    profile: "{{ item.shell_profile }}"
+    policyId: "{{ outer_item.ise_response.id }}"
+    rule:
+      condition:
+        attributeName: "ExternalGroups"
+        attributeValue: "{{ item.attributeValue }}"
+        conditionType: "ConditionAttributes"
+        description: "Deployed by Ansible"
+        dictionaryName: "home.local"
+        isNegate: false
+        operator: "equals"
+      default: false
+      name: "{{ item.name }}"
+      #rank: 0
+      state: "enabled"
+  loop: "{{ device_admin_policies[outer_item['ise_response']['name']]['authorization_rules'] }}"
+

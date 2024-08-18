@@ -1,0 +1,9 @@
+---
+ise_global:
+  ad_domain_name: "home.local"
+  ad_orgunit: "OU=ISE,DC=home,DC=local"
+ad_groups:
+  - "switch-admins"
+  - "switch-read"
+  - "firewall-admins"
+  - "firewall-read"

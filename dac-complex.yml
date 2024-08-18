@@ -1,0 +1,15 @@
+- name: Create Device Admin Conditions
+  cisco.ise.device_administration_conditions:
+    ise_hostname: "{{ ise_hostname }}"
+    ise_username: "{{ ise_username }}"
+    ise_password: "{{ ise_password }}"
+    ise_verify: "{{ ise_verify }}"
+    state: present
+    attributeName: "{{ item.value.attributeName }}"
+    attributeValue: "{{ item.value.attributeValue }}"
+    children: {{ item.value.children }}
+    conditionType: "{{ item.value.conditionType }}"
+    description: "Deployed by Ansible"
+    dictionaryName: "{{ item.value.dictionaryName }}"
+    isNegate: false
+    name: "{{ item.value.name }}"

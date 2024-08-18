@@ -1,0 +1,26 @@
+---
+device_admin_policies:
+  firewall-policy:
+    name: "firewall-policy"
+    attribute: "All Device Types#Firewalls"
+    authorization_rules:
+    - command_sets:
+        - "permit_all"
+      shell_profile: "test_admin"
+      name: "firewall-admins"
+    - command_sets:
+        - "permit_all"
+      shell_profile: "test_admin"
+      name: "firewall-read"
+  switch-policy:
+    name: "switch-policy"
+    attribute: "All Device Types#Switches"
+    authorization_rules:
+    - command_sets:
+        - "permit_all"
+      shell_profile: "test_admin"
+      name: "dell-switch-admins"
+    - command_sets:
+        - "permit_all"
+      shell_profile: "test_admin"
+      name: "dell-switch-read"
