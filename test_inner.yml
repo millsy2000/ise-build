@@ -1,7 +1,0 @@
----
-- name: test_inner
-  debug:
-    msg: "{{item}}"
-    #"outer item= {{outer_item}} inner item= {{ item.value }}"  
-  loop: "{{ device_admin_policies[outer_item['ise_response']['name']]['authorization_rules'] }}"
-#[outer_item['ise_response']['name']]['authorization_rules']
