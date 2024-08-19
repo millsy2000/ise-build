@@ -214,14 +214,16 @@
       isNegate: false
       name: "{{ item.name }}"
       children: "{{ item.children }}"
-    loop: "{{ comolex_network_access_conditions }}"
+    loop: "{{ complex_network_access_conditions }}"
     register: nac_complex
+    when: complex_network_access_conditions is defined
 
   - name: Save Complex Coniditions ID
     set_fact:
-      nac_ids: "{{ dac_ids | default ({}) | combine({item.ise_response.name:item.ise_response.id}) }}"
+      nac_ids: "{{ nac_ids | default ({}) | combine({item.ise_response.name:item.ise_response.id}) }}"
     no_log: True
     loop: "{{ nac_complex.results }}"
+    when: complex_network_access_conditions is defined
 
 #  - name: debug
 #    debug:

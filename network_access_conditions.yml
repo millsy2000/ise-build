@@ -17,11 +17,11 @@ simple_network_access_conditions:
     operator: "equals"
     attributeValue: "Wired802_1x"
     conditionType: "LibraryConditionAttributes"
-    name: "Wired_802.1X" 
+    name: "Wired802_1x" 
   - dictionaryName: "Normalised Radius"
     attributeName: "RadiusFlowType"
     operator: "equals"
     attributeValue: "Wireless802_1x"
     conditionType: "LibraryConditionAttributes"
     name: "Wireless802_1x"  
-complex_network_access_conditions: 
+#complex_network_access_conditions: 
