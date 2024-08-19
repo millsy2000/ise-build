@@ -8,6 +8,7 @@
     - ad_variables.yml
     - network_devices.yml
     - network_access_conditions.yml
+    - network_access_policy_sets.yml
   vars:
     ise_login: &ise_login
       ise_hostname: "{{ ise_hostname }}"
@@ -205,6 +206,10 @@
     no_log: True
     loop: "{{ nac_simple.results }}"
 
+  - name: debug
+    debug:
+     var: nac_ids
+
   - name: Create Complex Network Access Conditions
     cisco.ise.device_administration_conditions:
       <<: *ise_login
@@ -225,27 +230,24 @@
     loop: "{{ nac_complex.results }}"
     when: complex_network_access_conditions is defined
 
-  - name: Create Network Access Policy Sets
+  - name: Create Network Access Policy Policy Sets
     cisco.ise.network_access_policy_set:
       <<: *ise_login
       state: present
       condition:
-        attributeValue: "{{ item.value.attribute }}"
-        attributeName: "Device Type"
-        conditionType: "ConditionAttributes"
+        conditionType: "ConditionReference"
+        id: "{{ nac_ids[item.value.conditionName] }}"
+        name: "{{ item.value.conditionName }}"
         isNegate: false
-        dictionaryName: "DEVICE"
-        operator: "equals"
       default: false
       description: "Created by Ansible"
-      isProxy: false
       name: "{{ item.value.name }}"
-      serviceName: "Default Device Admin"
-    loop: "{{ device_admin_policies | dict2items }}"
+      serviceName: "{{ item.value.serviceName }}"
+    loop: "{{ network_access_policy_sets | dict2items }}"
     register: radius_profiles
 
-  - name: Create Radius Authorization Profiles
-    include_tasks: radius_policy_author.yml
+  - name: Create Network Access Authorization Profiles
+    include_tasks: network_access_policy_author.yml
     with_items: "{{ radius_profiles.results }}"
     loop_control:
       loop_var: outer_item

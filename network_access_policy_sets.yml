@@ -1,29 +1,24 @@
 ---
-radius_policy_sets:
+network_access_policy_sets:
   wired-802_1_x-policy:
     name: "wired-802_1_x-policy"
+    conditionName: "Wired802_1x"
     serviceName: "test_802_allowed_protocols"
-    dictionaryName: "Normalised Radius"
-    attributeName: "RadiusFlowType"
-    attributeValue: "Wired802_1x"
     authorization_rules:
     - profile: "PermitAccess"
       securityGroup: "Contractors"
       name: "machine-access"
-    - profile: "PermitAcces"
+    - profile: "PermitAccess"
       securityGroup: "Developers"
       name: "user-access"
-  switch-policy:
-    wireless-802_1_x-policy:
+  wireless-802_1_x-policy:
     name: "wireless-802_1_x-policy"
+    conditionName: "Wireless802_1x"
     serviceName: "test_802_allowed_protocols"
-    dictionaryName: "Normalised Radius"
-    attributeName: "RadiusFlowType"
-    attributeValue: "Wireless802_1x"
     authorization_rules:
     - profile: "PermitAccess"
       securityGroup: "Contractors"
       name: "machine-access"
-    - profile: "PermitAcces"
+    - profile: "PermitAccess"
       securityGroup: "Developers"
       name: "user-access"

@@ -1,5 +1,5 @@
 ---
-- name: Create Radius Authorization Rule
+- name: Create Network Access Authorization Rule
   cisco.ise.network_access_authorization_rules:
     ise_hostname: "{{ ise_hostname }}"
     ise_username: "{{ ise_username }}"
@@ -17,5 +17,5 @@
         id: "{{ nac_ids[item.name] }}"
       name: "{{ item.name }}"
       state: "enabled"
-  loop: "{{ radius_policy_sets[outer_item['ise_response']['name']]['authorization_rules'] }}"
+  loop: "{{ network_access_policy_sets[outer_item['ise_response']['name']]['authorization_rules'] }}"
 
