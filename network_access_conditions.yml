@@ -3,12 +3,13 @@ simple_network_access_conditions:
   - dictionaryName: "Network Access"
     attributeName: "EapChainingResult"
     operator: "equals"
-    attributeValue: "user failed and machine succeeded"
+    attributeValue: "User failed and machine succeeded"
+    conditionType: "LibraryConditionAttributes"
     name: "machine_access"
-  -  user_access:
-     dictionaryName: "Network Access"
+  - dictionaryName: "Network Access"
     attributeName: "EapChainingResult"
     operator: "equals"
     attributeValue: "User and machine both succeeded"
+    conditionType: "LibraryConditionAttributes"
     name: "user_access"  
 complex_network_access_conditions:
