@@ -1,0 +1,21 @@
+---
+- name: Create Radius Authorization Rule
+  cisco.ise.network_access_authorization_rules:
+    ise_hostname: "{{ ise_hostname }}"
+    ise_username: "{{ ise_username }}"
+    ise_password: "{{ ise_password }}"
+    ise_verify: "{{ ise_verify }}"
+    state: present
+    securityGroup: "{{ item.securityGroup }}"
+    profile: "{{ item.profile }}"
+    policyId: "{{ outer_item.ise_response.id }}"
+    rule:
+      condition:
+        conditionType: "ConditionReference"
+        description: "Deployed by Ansible"
+        name: "{{ item.name }}"
+        id: "{{ nac_ids[item.name] }}"
+      name: "{{ item.name }}"
+      state: "enabled"
+  loop: "{{ radius_policy_sets[outer_item['ise_response']['name']]['authorization_rules'] }}"
+
