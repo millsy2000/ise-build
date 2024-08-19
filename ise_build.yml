@@ -6,6 +6,7 @@
     - device_admin_conditions.yml
     - device_admin_policies.yml
     - ad_variables.yml
+    - network_devices.yml
   vars:
     ise_login: &ise_login
       ise_hostname: "{{ ise_hostname }}"
@@ -30,9 +31,7 @@
       description: "{{item.description}}"
       name: "{{ item.name}}"
       othername: "Device Type"
-    loop:
-      - {name: 'Device Type#All Device Types#Routers', description: 'Routers'}
-      - {name: 'Device Type#All Device Types#Firewalls', description: 'Firewalls'}
+    loop: network_devices_groups
 
   - name: Create network devices
     cisco.ise.network_device:
@@ -48,9 +47,8 @@
       NetworkDeviceIPList:
       - ipaddress: "{{item.ip_address}}"
         mask: 32
-    loop:
-      - {name: test-router, description: 'Test Router', network_group: 'Device Type#All Device Types#Routers', ip_address: '192.168.0.1'}
-      - {name: test-firewall, description: 'Test Firewall', network_group: 'Device Type#All Device Types#Firewalls', ip_address: '10.1.1.1'}
+    loop: network_devices
+
 
   - name: Create AD Join Point
     cisco.ise.active_directory:
