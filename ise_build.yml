@@ -31,7 +31,7 @@
       description: "{{item.description}}"
       name: "{{ item.name}}"
       othername: "Device Type"
-    loop: network_devices_groups
+    loop: "{{ network_devices_groups }}"
 
   - name: Create network devices
     cisco.ise.network_device:
@@ -47,8 +47,7 @@
       NetworkDeviceIPList:
       - ipaddress: "{{item.ip_address}}"
         mask: 32
-    loop: network_devices
-
+    loop: "{{ network_devices }}"
 
   - name: Create AD Join Point
     cisco.ise.active_directory:
