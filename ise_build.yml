@@ -182,8 +182,27 @@
     with_items: "{{ tacacs_profiles.results }}"
     loop_control:
       loop_var: outer_item
-    
 
+  - name: Create Simple Network Access Conditions
+    cisco.ise.network_access_conditions:
+      <<: *ise_login
+      state: present
+      attributeName: "{{ item.attributeName }}"
+      attributeValue: "{{ item.attributeValue }}"
+      conditionType: "{{ item.conditionType }}"
+      description: "Deployed by Ansible"
+      dictionaryName: "{{ item.dictionaryName }}"
+      operator: "{{ item.operator }}"
+      isNegate: false
+      name: "{{ item.name }}"
+    loop: "{{ simple_network_access_conditions }}"
+    register: nac_simple    
+
+  - name: Save Simple Coniditions ID
+    set_fact: 
+      nac_ids: "{{ dac_ids | default ({}) | combine({item.ise_response.name:item.ise_response.id}) }}"
+    #no_log: True
+    loop: "{{ nac_simple.results }}"
 #  - name: debug
 #    debug:
 #     var: tacacs_profiles

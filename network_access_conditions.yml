@@ -1,0 +1,14 @@
+---
+simple_network_access_conditions:
+  - dictionaryName: "Network Access"
+    attributeName: "EapChainingResult"
+    operator: "equals"
+    attributeValue: "user failed and machine succeeded"
+    name: "machine_access"
+  -  user_access:
+     dictionaryName: "Network Access"
+    attributeName: "EapChainingResult"
+    operator: "equals"
+    attributeValue: "User and machine both succeeded"
+    name: "user_access"  
+complex_network_access_conditions:
