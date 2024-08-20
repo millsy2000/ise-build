@@ -165,17 +165,15 @@
       <<: *ise_login
       state: present
       condition:
-        attributeValue: "{{ item.value.attribute }}"
-        attributeName: "Device Type"
-        conditionType: "ConditionAttributes"
+        conditionType: "ConditionReference"
+        id: "{{ dac_ids[item.value.conditionName] }}"
+        name: "{{ item.value.conditionName }}"
         isNegate: false
-        dictionaryName: "DEVICE"
-        operator: "equals"
       default: false
       description: "Created by Ansible"
       isProxy: false
       name: "{{ item.value.name }}"
-      serviceName: "Default Device Admin"
+      serviceName: "{{ item.value.serviceName }}"
     loop: "{{ device_admin_policies | dict2items }}"
     register: tacacs_profiles
 
@@ -205,10 +203,6 @@
       nac_ids: "{{ nac_ids | default ({}) | combine({item.ise_response.name:item.ise_response.id}) }}"
     no_log: True
     loop: "{{ nac_simple.results }}"
-
-  - name: debug
-    debug:
-     var: nac_ids
 
   - name: Create Complex Network Access Conditions
     cisco.ise.device_administration_conditions:

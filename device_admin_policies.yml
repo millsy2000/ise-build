@@ -2,7 +2,8 @@
 device_admin_policies:
   firewall-policy:
     name: "firewall-policy"
-    attribute: "All Device Types#Firewalls"
+    conditionName: "firewalls"
+    serviceName: "Default Device Admin"
     authorization_rules:
     - command_sets:
         - "permit_all"
@@ -14,7 +15,8 @@ device_admin_policies:
       name: "firewall-read"
   switch-policy:
     name: "switch-policy"
-    attribute: "All Device Types#Switches"
+    conditionName: "switches"
+    serviceName: "Default Device Admin"
     authorization_rules:
     - command_sets:
         - "permit_all"

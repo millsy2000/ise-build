@@ -1,5 +1,19 @@
 ---
 device_admin_simple_conditions:
+  switches:
+    name: "switches"
+    conditionType: "LibraryConditionAttributes"
+    dictionaryName: "DEVICE"
+    attributeName: "Device Type"
+    attributeValue: "All Device Types#Switches"
+    operator: "equals"
+  firewalls:
+    name: "firewalls"
+    conditionType: "LibraryConditionAttributes"
+    dictionaryName: "DEVICE"
+    attributeName: "Device Type"
+    attributeValue: "All Device Types#Firewalls"
+    operator: "equals"
   firewall-admins:
     name: "firewall-admins"
     conditionType: "LibraryConditionAttributes"
