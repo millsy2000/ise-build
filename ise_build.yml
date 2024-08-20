@@ -112,10 +112,11 @@
     cisco.ise.tacacs_command_sets:
       <<: *ise_login
       state: present
+      permitUnmatched: false
       description: "{{ item.description }}" 
       name: "{{ item.name }}"
       commands: "{{ item.commands }}"
-    loop "{{ command_sets  }}"    
+    loop: "{{ command_sets  }}"    
 
   - name: Create TACACS Profile
     cisco.ise.tacacs_profile:
@@ -124,7 +125,7 @@
       description: "{{ item.description }}"
       name: "{{ item.name }}"
       sessionAttributes: "{{ item.sessionAttributes }}"
-    loop "{{ shell_profiles }}"
+    loop: "{{ shell_profiles }}"
 
   - name: Create Device Simple Admin Conditions
     cisco.ise.device_administration_conditions:

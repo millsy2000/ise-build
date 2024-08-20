@@ -5,8 +5,11 @@ command_sets:
     commands:
       commandList:
       - grant: "PERMIT"
-        comannd: "show*"
-        arguments: 
+        command: "show*"
+        arguments: ""
+      - grant: "PERMIT"
+        command: "?*"
+        arguments: ""
 shell_profiles:
   - description: "priv 15 admin"
     name: "priv15"
