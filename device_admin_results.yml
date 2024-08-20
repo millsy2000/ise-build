@@ -1,0 +1,20 @@
+---
+command_sets:
+  - description: "permit all show commands"
+    name: "permit_show"
+    commands:
+      commandList:
+      - grant: "PERMIT"
+        comannd: "show*"
+        arguments: 
+shell_profiles:
+  - description: "priv 15 admin"
+    name: "priv15"
+    sessionAttributes:
+      sessionAttributeList:
+        - type:  MANDATORY
+          name: cisco-av-pair
+          value: admin
+        - name: priv-lvl
+          type: MANDATORY
+          value: "15"

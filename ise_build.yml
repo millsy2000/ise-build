@@ -1,3 +1,4 @@
+
 ---
 - hosts: ise_multi
   vars_files:
@@ -9,6 +10,7 @@
     - network_devices.yml
     - network_access_conditions.yml
     - network_access_policy_sets.yml
+    - device_admin_results.yml
   vars:
     ise_login: &ise_login
       ise_hostname: "{{ ise_hostname }}"
@@ -98,7 +100,7 @@
     with_items: "{{ ad_group_sids.results }}"
     tags: never
 
-  - name: Create Command Sets
+  - name: Create Command Permit All Command Set
     cisco.ise.tacacs_command_sets:
       <<: *ise_login
       state: present
@@ -106,20 +108,23 @@
       name: permit_all
       permitUnmatched: true
 
+  - name: Create Command Sets
+    cisco.ise.tacacs_command_sets:
+      <<: *ise_login
+      state: present
+      description: "{{ item.description }}" 
+      name: "{{ item.name }}"
+      commands: "{{ item.commands }}"
+    loop "{{ command_sets  }}"    
+
   - name: Create TACACS Profile
     cisco.ise.tacacs_profile:
       <<: *ise_login
       state: present
-      description: test_admin
-      name: test_admin
-      sessionAttributes:
-        sessionAttributeList:
-        - name: cisco-av-pair
-          type: MANDATORY
-          value: admin
-        - name: priv-lvl
-          type: MANDATORY
-          value: "15"
+      description: "{{ item.description }}"
+      name: "{{ item.name }}"
+      sessionAttributes: "{{ item.sessionAttributes }}"
+    loop "{{ shell_profiles }}"
 
   - name: Create Device Simple Admin Conditions
     cisco.ise.device_administration_conditions:
