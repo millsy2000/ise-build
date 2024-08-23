@@ -1,0 +1,18 @@
+---
+certificate_authentication:
+  - name: "test_user_cert_prof"
+    description: "Deployed by Ansible"
+    externalIdentityStoreName: "home.local"
+    certificateAttributeName: "SUBJECT_ALTERNATIVE_NAME"
+    allowedAsUserName: false
+    matchMode: "RESOLVE_IDENTITY_AMBIGUITY"
+    usernameFrom: "CERTIFICATE"
+  - name: "test_machine_cert_prof"
+    description: "Deployed by Ansible"
+    externalIdentityStoreName: "home.local"
+    certificateAttributeName: "SUBJECT_COMMON_NAME"
+    allowedAsUserName: false
+    matchMode: "RESOLVE_IDENTITY_AMBIGUITY"
+    usernameFrom: "CERTIFICATE"
+  
+

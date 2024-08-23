@@ -11,6 +11,9 @@
     - network_access_conditions.yml
     - network_access_policy_sets.yml
     - device_admin_results.yml
+    - network_access_results.yml
+    - external_identity.yml
+
   vars:
     ise_login: &ise_login
       ise_hostname: "{{ ise_hostname }}"
@@ -126,6 +129,30 @@
       name: "{{ item.name }}"
       sessionAttributes: "{{ item.sessionAttributes }}"
     loop: "{{ shell_profiles }}"
+
+  - name: Create Authentication Profiles
+    cisco.ise.certificate_profile:
+      <<: *ise_login
+      state: present
+      allowedAsUserName: "{{ item.allowedAsUserName }}"
+      certificateAttributeName: "{{ item.certificateAttributeName }}"
+      description: "{{ item.description }}"
+      externalIdentityStoreName: "{{ item.externalIdentityStoreName }}"
+      matchMode: "{{ item.matchMode }}"
+      name: "{{ item.name }}"
+      usernameFrom: "{{ item.usernameFrom }}"
+    loop: "{{ certificate_authentication }}"
+
+  - name: Create Authorization Profiles
+    cisco.ise.authorization_profile:
+      <<: *ise_login
+      name: "{{ item.name }}"
+      description: "{{ item.description }}"
+      accessType: "{{ item.accessType }}"
+      authzProfileType: "{{ item.authzProfileType }}"
+      profileName: "{{ item.profileName }}"
+      advancedAttributes: "{{ item.advancedAttributes }}"
+    loop: "{{ authorization_profiles }}"
 
   - name: Create Device Simple Admin Conditions
     cisco.ise.device_administration_conditions:

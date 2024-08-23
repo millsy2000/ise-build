@@ -1,0 +1,36 @@
+---
+authorization_profiles:
+  - name: "test_ansible_auth"
+    description: "test_ansible_auth"
+    accessType: "ACCESS_ACCEPT"
+    authzProfileType: "SWITCH"
+    profileName: "Cisco"
+    advancedAttributes:
+      - leftHandSideDictionaryAttribue:
+          AdvancedAttributeValueType: "AdvancedDictionaryAttribute"
+          dictionaryName: "Radius"
+          attributeName: "Tunnel-Private-Group-ID"
+        rightHandSideAttribueValue:
+          AdvancedAttributeValueType: "AttributeValue"
+          value: "1:20"
+      - leftHandSideDictionaryAttribue:
+          AdvancedAttributeValueType: "AdvancedDictionaryAttribute"
+          dictionaryName: "Radius"
+          attributeName: "Tunnel-Medium-Type"
+        rightHandSideAttribueValue:
+          AdvancedAttributeValueType: "AttributeValue"
+          value: "1:6"
+      - leftHandSideDictionaryAttribue:
+          AdvancedAttributeValueType: "AdvancedDictionaryAttribute"
+          dictionaryName: "Radius"
+          attributeName: "Tunnel-Type"
+        rightHandSideAttribueValue:
+          AdvancedAttributeValueType: "AttributeValue"
+          value: "1:13"
+      - leftHandSideDictionaryAttribue:
+          AdvancedAttributeValueType: "AdvancedDictionaryAttribute"
+          dictionaryName: "Radius"
+          attributeName: "Filter-ID"
+        rightHandSideAttribueValue:
+          AdvancedAttributeValueType: "AttributeValue"
+          value: "second-acl" 
